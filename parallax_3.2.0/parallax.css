@@ -1,4 +1,4 @@
-.parallax {
+.purejs-parallax {
   -webkit-transform: none;
       -ms-transform: none;
           transform: none;
@@ -10,19 +10,19 @@
   position: relative;
 }
 
-.p-vertical {
+.purejs-vertical {
   -webkit-transform: translateY(0);
       -ms-transform: translateY(0);
           transform: translateY(0);
 }
 
-.p-horizontal {
+.purejs-horizontal {
   -webkit-transform: translateX(0);
       -ms-transform: translateX(0);
           transform: translateX(0);
 }
 
-.p-mousemove {
+.purejs-mousemove {
   -webkit-transition: -webkit-transform .9s;
   transition: -webkit-transform .9s;
   -o-transition: transform .9s;

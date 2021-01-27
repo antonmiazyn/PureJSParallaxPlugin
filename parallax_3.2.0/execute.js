@@ -6,10 +6,10 @@
 
 window.onload = () => {
   //Finding the parallax elements in DOM
-  const parallaxNodeElements = document.querySelectorAll(".parallax");
-  const verticalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("p-vertical")); //separating vertical parallax elements in DOM
-  const horizontalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("p-horizontal")); //separating horizontal parallax elements in DOM
-  const mousemoveNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("p-mousemove")); //separating mousemove parallax elements in DOM
+  const parallaxNodeElements = document.querySelectorAll(".purejs-parallax");
+  const verticalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("purejs-vertical")); //separating vertical parallax elements in DOM
+  const horizontalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("purejs-horizontal")); //separating horizontal parallax elements in DOM
+  const mousemoveNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("purejs-mousemove")); //separating mousemove parallax elements in DOM
 
   //=======================
 
