@@ -2,12 +2,16 @@
 
 class Condition {
 
-  constructor(weight, speed, y, start) {
+  constructor(weight, speed, y, start, top, bottom) {
     this.weight = weight;
     this.speed = speed;
     this.y = y;
-    this.result;
     this.start = start;
+    this.top = top;
+    this.bottom = bottom;
+
+    this.result;
+    this.height;
   }
 
   setWeight(value) {
@@ -22,10 +26,25 @@ class Condition {
     this.y = value;
   }
 
-  setStart(value) {
+  /*setStart(value) {
     this.start = value;
+  }*/
+
+  setTop(value) {
+    this.top = value;
   }
 
+  setBottom(value) {
+    this.bottom = value;
+  }
+
+  /*-------------------------------------*/
+
+  getHeight() {
+    this.height = this.bottom - this.top;
+
+    return this.height;
+  }
 }
 
 /* === Vertical Condition Parallax === */

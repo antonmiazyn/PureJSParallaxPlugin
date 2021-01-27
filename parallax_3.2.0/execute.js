@@ -7,18 +7,45 @@
 window.onload = () => {
   //Finding the parallax elements in DOM
   const parallaxNodeElements = document.querySelectorAll(".parallax");
-  const verticalNodeElements = Array.from(parallaxNodeElements).filter(p_el => p_el.classList.contains("p-vertical")); //separating vertical parallax elements in DOM
-  const horizontalNodeElements = Array.from(parallaxNodeElements).filter(p_el => p_el.classList.contains("p-horizontal")); //separating horizontal parallax elements in DOM
-  const mousemoveNodeElements = Array.from(parallaxNodeElements).filter(p_el => p_el.classList.contains("p-mousemove")); //separating mousemove parallax elements in DOM
+  const verticalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("p-vertical")); //separating vertical parallax elements in DOM
+  const horizontalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("p-horizontal")); //separating horizontal parallax elements in DOM
+  const mousemoveNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("p-mousemove")); //separating mousemove parallax elements in DOM
 
   //=======================
 
   function setPagePosition() {
-    const y_offset = window.pageYOffset;
-    return y_offset;
+    const offset = window.pageYOffset;
+    return offset;
   }
 
   const loadedPagePosition = setPagePosition();
+
+  //=======================
+
+  function setElementViewport(object, nodeElements, index) {
+    object.setTop(nodeElements[index].offsetTop);
+    object.setBottom(nodeElements[index].offsetTop + nodeElements[index].innerHeight);
+  }
+
+  //=======================
+
+  const WINDOW_HEIGHT = window.innerHeight;
+  const WINDOW_DIVIDER = 2;
+  function checkViewport(object, height) {
+    const isImageBelow = object.top >= window.pageYOffset;
+    const isImageAbove = object.top < window.pageYOffset;
+    const isImageInViewport = object.top - window.pageYOffset <= height / WINDOW_DIVIDER;
+
+    if(isImageBelow && isImageInViewport) {
+      return true;
+    } else {
+      if(isImageAbove) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 
   //=======================
 
@@ -27,7 +54,7 @@ window.onload = () => {
   function createVerticalObjects(elements) {
     const array = [];
     elements.forEach((element) => {
-      const object = new Vertical(0, 0, loadedPagePosition, 0);
+      const object = new Vertical(0, 0, loadedPagePosition, 0, 0, 0);
       array.push(object);
     });
 
@@ -39,14 +66,14 @@ window.onload = () => {
   function createHorizontalObjects(elements) {
     const array = [];
     elements.forEach((element) => {
-      const object = new Horizontal(0, 0, loadedPagePosition, 0);
+      const object = new Horizontal(0, 0, loadedPagePosition, 0, 0, 0);
       array.push(object);
     });
 
     return array;
   }
 
-  let mousemoveCreatedObjects = horizontalNodeElements ? createMousemoveObjects(mousemoveNodeElements) : [];
+  let mousemoveCreatedObjects = mousemoveNodeElements ? createMousemoveObjects(mousemoveNodeElements) : [];
 
   function createMousemoveObjects(elements) {
     const array = [];
@@ -70,8 +97,7 @@ window.onload = () => {
           object.setWeight(10); //default
         }
 
-        object.setY(Number(loadedPagePosition));
-        object.setStart(object.verticalMove());
+        setElementViewport(object, verticalNodeElements, i);
       }
     });
   }
@@ -87,8 +113,7 @@ window.onload = () => {
           object.setWeight(10); //default
         }
 
-        object.setY(Number(loadedPagePosition));
-        object.setStart(object.horizontalMove());
+        setElementViewport(object, horizontalNodeElements, i);
       }
     });
   }
@@ -110,46 +135,77 @@ window.onload = () => {
 
   //=======================
 
-    setVerticalProperties();
+  setVerticalProperties();
 
-    verticalNodeElements.forEach((element, i) => {
-      element.style.transform = "translateY(" + verticalCreatedObjects[i].start + "px)"; //changing position
-    });
+  setHorizontalProperties();
 
-    setHorizontalProperties();
+  verticalNodeElements.forEach((element, i) => {
+    element.style.transform = "translateY(" + verticalCreatedObjects[i].start + "px)"; //changing position
+  });
 
-    horizontalNodeElements.forEach((element, i) => {
-      element.style.transform = "translateX(" + horizontalCreatedObjects[i].start + "px)"; //changing position
-    });
+  horizontalNodeElements.forEach((element, i) => {
+    element.style.transform = "translateX(" + horizontalCreatedObjects[i].start + "px)"; //changing position
+  });
 
-    setMousemoveProperties();
+  /*----------------*/
+
+  setMousemoveProperties();
 
   //=======================
 
-  //Scrolling actions | Affects Vertical and Horizontal parallax
+  //Scrolling actions | Affect Vertical and Horizontal parallax
 
-  window.onscroll = () => {
-    let currentPagePosition = setPagePosition(); //dynamic value
+  function scrollPage() {
+    let currentPagePosition = setPagePosition();
 
-    verticalCreatedObjects.forEach((object) => {
-      object.setY(Number(currentPagePosition));
+    function changeImagePosition(object) {
+      if(checkViewport(object, WINDOW_HEIGHT)) {
+        if(object.top > WINDOW_HEIGHT) {
+          object.setY(object.top - WINDOW_HEIGHT / WINDOW_DIVIDER - Number(currentPagePosition));
+        } else {
+          object.setY(Number(currentPagePosition));
+        }
+      } else {
+        object.setY(0);
+      }
+    }
+
+    verticalCreatedObjects.forEach((object, i) => {
+      changeImagePosition(object);
     });
 
     horizontalCreatedObjects.forEach((object) => {
-      object.setY(Number(currentPagePosition));
+      changeImagePosition(object);
     });
 
-      if(verticalNodeElements) {
-        verticalNodeElements.forEach((element, i) => {
+    if(verticalNodeElements) {
+      verticalNodeElements.forEach((element, i) => {
+        if(checkViewport(verticalCreatedObjects[i], WINDOW_HEIGHT)) {
           element.style.transform = "translateY(" + verticalCreatedObjects[i].verticalMove() + "px)"; //changing position
-        });
-      }
+        }
+      });
+    }
 
-      if(horizontalNodeElements) {
-        horizontalNodeElements.forEach((element, i) => {
+    if(horizontalNodeElements) {
+      horizontalNodeElements.forEach((element, i) => {
+        if(checkViewport(horizontalCreatedObjects[i], WINDOW_HEIGHT)) {
           element.style.transform = "translateX(" + horizontalCreatedObjects[i].horizontalMove() + "px)"; //changing position
-        });
-      }
+        }
+      });
+    }
+  }
+
+  /*--------------------*/
+
+  let scrollTicking = false;
+  window.onscroll = (e) => {
+    if(!scrollTicking) {
+      window.requestAnimationFrame(() => {
+        scrollPage();
+        scrollTicking = false;
+      });
+    }
+    scrollTicking = true;
   }
 
   //Mousemove actions | Affects Mousemove parallax
