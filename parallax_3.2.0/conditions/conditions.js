@@ -2,11 +2,10 @@
 
 class Condition {
 
-  constructor(weight, speed, y, start, top, bottom) {
+  constructor(weight, speed, y, top, bottom) {
     this.weight = weight;
     this.speed = speed;
     this.y = y;
-    this.start = start;
     this.top = top;
     this.bottom = bottom;
 
@@ -25,10 +24,6 @@ class Condition {
   setY(value) {
     this.y = value;
   }
-
-  /*setStart(value) {
-    this.start = value;
-  }*/
 
   setTop(value) {
     this.top = value;

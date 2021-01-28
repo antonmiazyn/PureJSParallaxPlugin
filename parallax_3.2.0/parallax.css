@@ -8,6 +8,9 @@
   transition: transform .1s;
   transition: transform .1s, -webkit-transform .1s;
   position: relative;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  will-change: transform;
 }
 
 .purejs-vertical {

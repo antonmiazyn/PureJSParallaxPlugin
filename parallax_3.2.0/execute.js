@@ -7,9 +7,9 @@
 window.onload = () => {
   //Finding the parallax elements in DOM
   const parallaxNodeElements = document.querySelectorAll(".purejs-parallax");
-  const verticalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("purejs-vertical")); //separating vertical parallax elements in DOM
-  const horizontalNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("purejs-horizontal")); //separating horizontal parallax elements in DOM
-  const mousemoveNodeElements = Array.from(parallaxNodeElements).filter(element => element.classList.contains("purejs-mousemove")); //separating mousemove parallax elements in DOM
+  const verticalNodeElements = Array.from(parallaxNodeElements).filter(element => (element.classList.contains("purejs-vertical") && element.offsetHeight > 0)); //separating vertical parallax elements in DOM
+  const horizontalNodeElements = Array.from(parallaxNodeElements).filter(element => (element.classList.contains("purejs-horizontal") && element.offsetHeight > 0)); //separating horizontal parallax elements in DOM
+  const mousemoveNodeElements = Array.from(parallaxNodeElements).filter(element => (element.classList.contains("purejs-mousemove") && element.offsetHeight > 0)); //separating mousemove parallax elements in DOM
 
   //=======================
 
@@ -23,8 +23,8 @@ window.onload = () => {
   //=======================
 
   function setElementViewport(object, nodeElements, index) {
-    object.setTop(nodeElements[index].offsetTop);
-    object.setBottom(nodeElements[index].offsetTop + nodeElements[index].innerHeight);
+    object.setTop(Math.abs(nodeElements[index].getBoundingClientRect().top + pageYOffset));
+    object.setBottom(Math.abs(nodeElements[index].getBoundingClientRect().top + pageYOffset + nodeElements[index].innerHeight));
   }
 
   //=======================
@@ -54,7 +54,7 @@ window.onload = () => {
   function createVerticalObjects(elements) {
     const array = [];
     elements.forEach((element) => {
-      const object = new Vertical(0, 0, loadedPagePosition, 0, 0, 0);
+      const object = new Vertical(0, 0, loadedPagePosition, 0, 0);
       array.push(object);
     });
 
@@ -66,7 +66,7 @@ window.onload = () => {
   function createHorizontalObjects(elements) {
     const array = [];
     elements.forEach((element) => {
-      const object = new Horizontal(0, 0, loadedPagePosition, 0, 0, 0);
+      const object = new Horizontal(0, 0, loadedPagePosition, 0, 0);
       array.push(object);
     });
 
@@ -97,7 +97,9 @@ window.onload = () => {
           object.setWeight(10); //default
         }
 
-        setElementViewport(object, verticalNodeElements, i);
+        setTimeout(() => {
+          setElementViewport(object, verticalNodeElements, i);
+        }, 800)
       }
     });
   }
@@ -113,7 +115,9 @@ window.onload = () => {
           object.setWeight(10); //default
         }
 
-        setElementViewport(object, horizontalNodeElements, i);
+        setTimeout(() => {
+          setElementViewport(object, horizontalNodeElements, i);
+        }, 800)
       }
     });
   }
@@ -161,7 +165,7 @@ window.onload = () => {
     function changeImagePosition(object) {
       if(checkViewport(object, WINDOW_HEIGHT)) {
         if(object.top > WINDOW_HEIGHT) {
-          object.setY(object.top - WINDOW_HEIGHT / WINDOW_DIVIDER - Number(currentPagePosition));
+          object.setY(Math.abs(object.top - WINDOW_HEIGHT / WINDOW_DIVIDER - Number(currentPagePosition)));
         } else {
           object.setY(Number(currentPagePosition));
         }
@@ -197,16 +201,19 @@ window.onload = () => {
 
   /*--------------------*/
 
-  let scrollTicking = false;
-  window.onscroll = (e) => {
-    if(!scrollTicking) {
-      window.requestAnimationFrame(() => {
-        scrollPage();
-        scrollTicking = false;
-      });
+  setTimeout(() => {
+    requestAnimationFrame(scrollPage);
+
+    let scrollTicking = false;
+    window.onscroll = (e) => {
+      if(!scrollTicking) {
+          scrollTicking = false;
+      }
+      scrollTicking = true;
+
+      requestAnimationFrame(scrollPage);
     }
-    scrollTicking = true;
-  }
+  }, 1000)
 
   //Mousemove actions | Affects Mousemove parallax
 
